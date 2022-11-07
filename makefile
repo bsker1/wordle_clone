@@ -11,4 +11,4 @@ clean:
 	rm *.o wordle_clone
 
 cleanwin:
-	del *.o generate_dictioanry.exe
+	del *.o wordle_clone.exe

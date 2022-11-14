@@ -7,6 +7,10 @@ main.o:
 db:
 	g++ -g main.cpp -o wordle_clone
 
+run:
+	clear
+	./wordle_clone
+
 clean:
 	rm *.o wordle_clone
 

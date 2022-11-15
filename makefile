@@ -1,11 +1,14 @@
- wordle_clone: main.o
-	g++ main.o -o wordle_clone
+ wordle_clone: main.o functions.o
+	g++ main.o functions.o -o wordle_clone
 
 main.o:
 	g++ -c main.cpp
 
+functions.o:
+	g++ -c functions.cpp
+
 db:
-	g++ -g main.cpp -o wordle_clone
+	g++ -g main.cpp functions.cpp -o wordle_clone
 
 run:
 	clear

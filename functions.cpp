@@ -93,11 +93,13 @@ void guessLoop(std::vector<std::string> &guessedWords)
     bool mode = chooseMode();
 
     std::string answer = generateAnswer();
+    std::vector<std::string> hints;
+    initVector(hints);
     int turn = 0;
     bool loopFlag = true;
     while (loopFlag)
     {
-        generateGrid(guessedWords);
+        generateGrid(guessedWords, hints);
 
         std::cout << "Guess a word: ";
         clearBuffer();
@@ -110,7 +112,8 @@ void guessLoop(std::vector<std::string> &guessedWords)
 }
 
 //  Generates grid where each guessed word is displayed
-void generateGrid(std::vector<std::string> guessedWords)
+void generateGrid(std::vector<std::string> guessedWords, 
+                  std::vector<std::string> hints)
 {
     std::cout << std::endl;
     for (int i = 0; i < 6; ++i)
@@ -121,5 +124,10 @@ void generateGrid(std::vector<std::string> guessedWords)
             std::cout << "| " << currentCharacter << " ";
         }
         std::cout << "|\n";
+        for (int j = 0; j < 5; ++j)
+        {
+            std::cout << "   " << hints[i][j];
+        }
+        std::cout << std::endl;
     }
 }

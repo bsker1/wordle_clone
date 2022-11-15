@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <vector>
 #include <stdlib.h>
 
 const int wordCount = 21952;
@@ -11,8 +12,8 @@ std::string pickAnswer()
     std::ifstream dictionary;
     dictionary.open("wordledictionary.txt");
 
-    std::string answer;
     srand(time(NULL));
+    std::string answer;
     int index = rand() % wordCount;
     for (int i = 0; i <= index; ++i)
     {
@@ -24,19 +25,23 @@ std::string pickAnswer()
 }
 
 //  Initializes passed string
-void initString(std::string& inString)
+void initVector(std::vector<std::string> &inVect)
 {
-    inString = "     ";
+    for (int i = 0; i < 6; ++i)
+    {
+        inVect.push_back("     ");
+    }
 }
 
 //  Generates grid where each guessed word is displayed
-void generateGrid(std::string guessedWords[])
+void generateGrid(std::vector<std::string> guessedWords)
 {
     for (int i = 0; i < 6; ++i)
     {
         for (int j = 0; j < 5; ++j)
         {
-            std::cout << "| " << guessedWords[i][j] << " ";
+            char currentCharacter = toupper(guessedWords[i][j]);
+            std::cout << "| " << currentCharacter << " ";
         }
         std::cout << "|\n";
     }
@@ -46,13 +51,10 @@ int main()
 {
     std::string answer = pickAnswer();
 
-    std::string guessedWords[6];
-    for (int i = 0; i < 6; ++i)
-    {
-        initString(guessedWords[i]);
-    }
+    std::vector<std::string> guessedAnswers;
+    initVector(guessedAnswers);
 
-    generateGrid(guessedWords);
+    generateGrid(guessedAnswers);
 
     return 0;
 }

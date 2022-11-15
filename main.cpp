@@ -8,8 +8,6 @@
 
 int main()
 {
-    std::string answer = pickAnswer();
-
     std::vector<std::string> guessedAnswers;
     initVector(guessedAnswers);
 

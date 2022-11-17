@@ -92,7 +92,8 @@ void guessLoop(std::vector<std::string> &guessedWords)
 {
     bool mode = chooseMode();
 
-    std::string answer = generateAnswer();
+    std::string answer = "lease";
+    std::cout << "TESTING: answer is " << answer << std::endl;
     std::vector<std::string> hints;
     initVector(hints);
     int turn = 0;

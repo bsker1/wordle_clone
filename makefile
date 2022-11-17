@@ -1,14 +1,14 @@
  wordle_clone: main.o functions.o
-	g++ main.o functions.o -o wordle_clone
+	g++ -std=c++17 main.o functions.o -o wordle_clone
 
 main.o:
-	g++ -c main.cpp
+	g++ -c -std=c++17 main.cpp
 
 functions.o:
-	g++ -c functions.cpp
+	g++ -c -std=c++17 functions.cpp
 
 db:
-	g++ -g main.cpp functions.cpp -o wordle_clone
+	g++ -g -std=c++17 main.cpp functions.cpp -o wordle_clone
 
 open:
 	open main.cpp
@@ -26,7 +26,7 @@ run:
 
 runwin:
 	cls
-	wordleclone.exe
+	wordle_clone.exe
 
 clean:
 	rm *.o wordle_clone

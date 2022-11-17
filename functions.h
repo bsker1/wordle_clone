@@ -1,5 +1,4 @@
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -15,5 +14,3 @@ void clearBuffer();
 void initVector(std::vector<std::string> &);
 void guessLoop(std::vector<std::string> &);
 void generateGrid(std::vector<std::string>, std::vector<std::string>);
-
-#endif

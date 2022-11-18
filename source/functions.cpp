@@ -98,7 +98,7 @@ void guessLoop(std::vector<std::string> &guessedWords)
     bool hardMode = chooseMode();
 
     std::string answer = generateAnswer();
-    std::cout << "TESTING: answer is " << answer << std::endl;
+    //std::cout << "TESTING: answer is " << answer << std::endl;
     std::vector<std::string> hints;
     initVector(hints);
 
@@ -121,11 +121,18 @@ void guessLoop(std::vector<std::string> &guessedWords)
 
         generateGrid(guessedWords, hints);
 
-        if (++turn >= 6)
+        if (hints[turn] == "GGGGG")
+        {
+            std::cout << "You got the word in " << turn + 1 << "!" << std::endl;
+            return;   
+        }
+        if (++turn == 6)
         {
             loopFlag = false;
         }
     }
+
+    std::cout << "The word was \"" << answer << ".\"" << std::endl;
 }
 
 //  Generates grid where each guessed word is displayed

@@ -95,21 +95,31 @@ void initVector(std::vector<std::string> &inVect)
 //  Main game loop
 void guessLoop(std::vector<std::string> &guessedWords)
 {
-    //bool hardMode = chooseMode();
+    bool hardMode = chooseMode();
 
     std::string answer = generateAnswer();
     std::cout << "TESTING: answer is " << answer << std::endl;
     std::vector<std::string> hints;
     initVector(hints);
+
     int turn = 0;
     bool loopFlag = true;
+
+    generateGrid(guessedWords, hints);
     while (loopFlag)
     {
-        generateGrid(guessedWords, hints);
-
-        getGuess(guessedWords[turn]);
+        if (hardMode && turn > 0)
+        {
+            getGuess(guessedWords[turn], guessedWords[turn - 1], hints[turn - 1]);
+        }
+        else
+        {
+            getGuess(guessedWords[turn]);
+        }
 
         generateHints(answer, guessedWords[turn], hints[turn]);
+
+        generateGrid(guessedWords, hints);
 
         if (++turn >= 6)
         {
@@ -139,15 +149,36 @@ void generateGrid(std::vector<std::string> guessedWords,
     }
 }
 
-void getGuess(std::string &inString)
+//  Prompts the user to enter a word
+void getGuess(std::string &guess)
 {
     bool loopFlag = true;
     while (loopFlag)
     {
         std::cout << "Guess a word" << std::endl;
         std::cout << "\n*__ ";
-        std::cin >> inString;
-        if (validateGuess(inString))
+        std::cin >> guess;
+        if (validateGuess(guess))
+        {
+            loopFlag = false;
+        }
+        else
+        {
+            clearBuffer();
+        }
+    }
+}
+
+//  Prompts user to enter a word
+void getGuess(std::string &guess, std::string prevGuess, std::string prevHints)
+{
+    bool loopFlag = true;
+    while (loopFlag)
+    {
+        std::cout << "Guess a word" << std::endl;
+        std::cout << "\n*__ ";
+        std::cin >> guess;
+        if (validateGuess(guess) && validateHard(guess, prevGuess, prevHints))
         {
             loopFlag = false;
         }
@@ -159,7 +190,7 @@ void getGuess(std::string &inString)
 }
 
 //  Returns false if input fails any format check, true otherwise
-bool validateGuess(std::string &inString)
+bool validateGuess(std::string &guess)
 {
     if (std::cin.fail())
     {
@@ -167,7 +198,7 @@ bool validateGuess(std::string &inString)
         return false;
     }
 
-    if (inString.size() != 5)
+    if (guess.size() != 5)
     {
         std::cerr << "ERROR: word must be 5 letters long" << std::endl;
         return false;
@@ -175,15 +206,15 @@ bool validateGuess(std::string &inString)
 
     for (int i = 0; i < 5; ++i)
     {
-        inString[i] = tolower(inString[i]);
-        if (inString[i] < 97 || inString[i] > 122)
+        guess[i] = tolower(guess[i]);
+        if (guess[i] < 97 || guess[i] > 122)
         {
             std::cerr << "ERROR: word must only contain letters" << std::endl;
             return false;
         }
     }
 
-    if (!inDictionary(inString))
+    if (!inDictionary(guess))
     {
         std::cerr << "ERROR: word does not exist" << std::endl;
         return false;
@@ -192,6 +223,61 @@ bool validateGuess(std::string &inString)
     return true;
 }
 
+//  Outputs false if guess is missing any revealed hints, true otherwise
+bool validateHard(std::string guess, std::string prevGuess, std::string prevHints)
+{
+    bool checkedIndexes[5] = {false, false, false, false, false};
+
+    //  Checks if all green hints are present
+    for (int i = 0; i < 5; ++i)
+    {
+        if (prevHints[i] != 'G')
+        {
+            continue;
+        }
+        if (guess[i] != prevGuess[i])
+        {
+            std::cerr << "ERROR: word must contain all revealed hints" << std::endl;
+            return false;
+        }
+        //  Marks current index as checked if the letter is present
+        checkedIndexes[i] = true;
+    }
+
+    //  Checks if all yellow hints are present
+    for (int i = 0; i < 5; ++i)
+    {
+        bool hintIsPresent = false;
+        if (prevHints[i] != 'Y')
+        {
+            continue;
+        }
+
+        //  Checks each character of guess to see if the yellow hint is present
+        for (int j = 0; j < 5; ++j)
+        {
+            if (checkedIndexes[j])
+            {
+                continue;
+            }
+            if (guess[j] == prevGuess[i])
+            {
+                hintIsPresent = true;
+                checkedIndexes[j] = true;
+                break;
+            }
+        }
+        if (!hintIsPresent)
+        {
+            std::cerr << "ERROR: word must contain all revealed hints" << std::endl;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+//  Returns true if the given word is in the Wordle dictionary, true otherwise
 bool inDictionary(std::string inString)
 {
     std::ifstream dictionary;
@@ -216,6 +302,7 @@ bool inDictionary(std::string inString)
     return false;
 }
 
+//  Fills hint string with G or Y for each character present in the answer
 void generateHints(std::string answer, std::string guess, std::string &hint)
 {
     hint = "xxxxx";
@@ -223,6 +310,7 @@ void generateHints(std::string answer, std::string guess, std::string &hint)
     checkYellow(answer, guess, hint);
 }
 
+//  Changes character to G if the letter is in the correct position to the answer
 void checkGreen(std::string answer, std::string guess, std::string &hint)
 {
     for (int i = 0; i < 5; ++i)
@@ -234,6 +322,7 @@ void checkGreen(std::string answer, std::string guess, std::string &hint)
     }
 }
 
+//  Changes character to Y if the letter is present anywhere else in the word
 void checkYellow(std::string answer, std::string guess, std::string &hint)
 {
     for (int i = 0; i < 5; ++i)
